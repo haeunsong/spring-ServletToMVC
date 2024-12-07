@@ -1,4 +1,4 @@
-package hello.servlet.basic;
+package hello.servlet.basic.request;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -106,6 +106,4 @@ public class RequestHeaderServlet extends HttpServlet {
         System.out.println("--- 기타 조회 end ---");
         System.out.println();
     }
-
-
 }
