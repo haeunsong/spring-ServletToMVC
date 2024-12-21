@@ -5,7 +5,11 @@ import hello.servlet.web.frontcontroller.MyView;
 import hello.servlet.web.frontcontroller.v3.controller.MemberFormControllerV3;
 import hello.servlet.web.frontcontroller.v3.controller.MemberListControllerV3;
 import hello.servlet.web.frontcontroller.v3.controller.MemberSaveControllerV3;
+import hello.servlet.web.frontcontroller.v4.controller.MemberFormControllerV4;
+import hello.servlet.web.frontcontroller.v4.controller.MemberListControllerV4;
+import hello.servlet.web.frontcontroller.v4.controller.MemberSaveControllerV4;
 import hello.servlet.web.frontcontroller.v5.adapter.ControllerV3HandlerAdapter;
+import hello.servlet.web.frontcontroller.v5.adapter.ControllerV4HandlerAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -40,25 +44,34 @@ public class FrontControllerServletV5 extends HttpServlet {
                 MemberSaveControllerV3());
         handlerMappingMap.put("/front-controller/v5/v3/members", new
                 MemberListControllerV3());
+
+        //V4 추가
+        handlerMappingMap.put("/front-controller/v5/v4/members/new-form", new
+                MemberFormControllerV4());
+        handlerMappingMap.put("/front-controller/v5/v4/members/save", new
+                MemberSaveControllerV4());
+        handlerMappingMap.put("/front-controller/v5/v4/members", new
+                MemberListControllerV4());
     }
 
     private void initHandlerAdapters() {
         handlerAdapters.add(new ControllerV3HandlerAdapter());
+        handlerAdapters.add(new ControllerV4HandlerAdapter());
     }
 
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        /* 핸들러 매핑 */
-        // 요청에 맞는 핸들러를 가져오고
+        // 1. 핸들러 조회
         Object handler = getHandler(request);
 
         if(handler == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        // 핸들러를 처리할 수 있는 어댑터를 가져온다.
+
+        // 2. 핸들러에 맞는 어댑터 조회
         MyHandlerAdapter adapter = getHandlerAdapter(handler);
-        // handle() : 실제 컨트롤러를 호출한다. (어댑터는 handler를 호출한다)
+        // 3. 적합한 핸들러(컨트롤러)를 실행시킨다.
         ModelView mv = adapter.handle(request,response,handler);
 
         MyView view = viewResolver(mv.getViewName());
